@@ -7,7 +7,7 @@ import styles from "./post.module.css";
 import { getFileUrl, ValidatedPost } from "../lib/validation";
 // TODO type defs
 
-type Text = Extract<Block, { type: "paragraph" }>["paragraph"]["text"];
+type Text = Extract<Block, { type: "paragraph" }>["paragraph"]["rich_text"];
 export const Text: React.FC<{ text: Text, parentId: string }> = ({ text, parentId }) => {
   if (!text) {
     return null;
@@ -55,32 +55,32 @@ const Block: React.FC<Block | BlockWithChildren> = (block) => {
     case "paragraph":
       return (
         <p>
-          <Text text={block[type].text} parentId={block.id} />
+          <Text text={block[type].rich_text} parentId={block.id} />
         </p>
       );
     case "heading_1":
       return (
         <h1>
-          <Text text={block[type].text} parentId={block.id} />
+          <Text text={block[type].rich_text} parentId={block.id} />
         </h1>
       );
     case "heading_2":
       return (
         <h2>
-          <Text text={block[type].text} parentId={block.id} />
+          <Text text={block[type].rich_text} parentId={block.id} />
         </h2>
       );
     case "heading_3":
       return (
         <h3>
-          <Text text={block[type].text} parentId={block.id} />
+          <Text text={block[type].rich_text} parentId={block.id} />
         </h3>
       );
     case "bulleted_list_item":
     case "numbered_list_item":
       return (
         <li>
-          <Text text={block[type].text} parentId={block.id} />
+          <Text text={block[type].rich_text} parentId={block.id} />
         </li>
       );
     case "to_do":
@@ -88,7 +88,7 @@ const Block: React.FC<Block | BlockWithChildren> = (block) => {
         <div>
           <label htmlFor={id}>
             <input type="checkbox" id={id} defaultChecked={block[type].checked} />{" "}
-            <Text text={block[type].text} parentId={block.id} />
+            <Text text={block[type].rich_text} parentId={block.id} />
           </label>
         </div>
       );
@@ -96,7 +96,7 @@ const Block: React.FC<Block | BlockWithChildren> = (block) => {
       return (
         <details>
           <summary>
-            <Text text={block[type].text} parentId={block.id} />
+            <Text text={block[type].rich_text} parentId={block.id} />
           </summary>
           {"children" in block[type] && (block as BlockWithChildren)[type].children?.map((block) => <Block {...block}/>)}
         </details>
@@ -115,12 +115,12 @@ const Block: React.FC<Block | BlockWithChildren> = (block) => {
     case "divider":
       return <hr key={id} />;
     case "quote":
-      return <blockquote key={id}>{block[type].text[0].plain_text}</blockquote>;
+      return <blockquote key={id}>{block[type].rich_text[0].plain_text}</blockquote>;
     case "code":
       return (
         <pre className={styles.pre}>
           <code className={styles.code_block} key={id}>
-            {block[type].text[0].plain_text}
+            {block[type].rich_text[0].plain_text}
           </code>
         </pre>
       );

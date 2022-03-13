@@ -9,7 +9,7 @@ const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
 
-export type Post = QueryDatabaseResponse["results"][number];
+export type Post = Extract<QueryDatabaseResponse["results"][number], { properties: any }>;
 export const getDatabase = async (databaseId: string): Promise<ValidatedPost[]> => {
   const response = await notion.databases.query({
     database_id: databaseId,
@@ -21,16 +21,16 @@ export const getPage = async (pageId: string) => {
   const response = await notion.pages.retrieve({ page_id: pageId });
   return response;
 };
-export type Block = ListBlockChildrenResponse["results"][number];
+export type Block = Extract<ListBlockChildrenResponse["results"][number], { has_children: boolean }>;
 export const getBlocks = async (blockId: string) => {
-  const blocks: ListBlockChildrenResponse["results"] = [];
+  const blocks: Block[] = [];
   let cursor: string;
   while (true) {
     const { results, next_cursor } = await notion.blocks.children.list({
       start_cursor: cursor,
       block_id: blockId,
     });
-    blocks.push(...results);
+    blocks.push(...results.filter((block) => "has_children" in block) as Block[]);
     if (!next_cursor) {
       break;
     }

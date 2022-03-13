@@ -12,6 +12,9 @@ interface PropertiesTypeDefinition {
 export type ValidatedPost = Omit<Post, "properties"> & { properties: PropertiesTypeDefinition };
 
 export const validatePostProperties = (post: Post): ValidatedPost => {
+    if (!post.properties) {
+        throw new Error(`ERROR: post with id "${post.id}" has no properties`);
+    }
     WARNING_PROPERTIES.forEach((prop) => {
         if (post.properties[prop] === undefined) {
             console.warn(`WARNING for post with id "${post.id}": ${prop} is undefined`);
